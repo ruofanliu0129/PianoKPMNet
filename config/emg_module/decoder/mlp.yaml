@@ -1,0 +1,6 @@
+_target_:  module.networks.MLP
+in_channels: 70  
+layer_sizes: [512, 512]
+out_channels: 6  
+layer_norm: True
+scale: .01
