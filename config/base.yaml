@@ -1,0 +1,46 @@
+defaults:
+  - _self_
+  - experiment: pianokpm_multimodal
+
+data_root: ./dataset
+dataset_split: ./dataloader/dataset_split/split_partial_dataset.json
+
+checkpoint_path: ./saved_model
+checkpoint_name: architectural_eval_model.pth
+
+seed: 42
+
+monitor_metric: val_loss
+monitor_mode: min
+
+callbacks:
+  - _target_: pytorch_lightning.callbacks.LearningRateMonitor
+  - _target_: pytorch_lightning.callbacks.ModelCheckpoint
+    monitor: ${monitor_metric}
+    mode: ${monitor_mode}
+    save_last: True
+    verbose: True
+  - _target_: pytorch_lightning.callbacks.EarlyStopping
+    monitor: ${monitor_metric}
+    mode: ${monitor_mode}
+    patience: 50
+    check_on_train_epoch_end: False
+    verbose: True
+
+# Customize hydra directory outputs
+# see: https://hydra.cc/docs/0.11/configure_hydra/workdir/
+hydra:
+  run:
+    dir: ckpt/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  sweep:
+    dir: ${hydra.run.dir}
+    subdir: ${hydra.job.num}_${hydra.job.override_dirname}/seed=${seed}
+  output_subdir: hydra_configs
+  job:
+    name: pianokpm
+    config:
+      override_dirname:
+        exclude_keys:
+          - seed
+
+

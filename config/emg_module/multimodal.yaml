@@ -1,0 +1,5 @@
+_target_: module.emg_modules.EmgModule_multimodal
+predict_vel: False
+state_condition: True
+
+network: ${network}
