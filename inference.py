@@ -33,11 +33,6 @@ def get_configurations():
     opt.use_pose = True
     opt.use_key = True
 
-    opt.mode = "train"
-    opt.epoch = 200
-    opt.batch_size = 64
-    opt.batch_size_val = 64
-    opt.log_rate = 1
     opt.win_len = 1024
     opt.win_len_val = 1024
     opt.pose_win_len = 60
@@ -105,7 +100,7 @@ def make_lightning_module(config: DictConfig):
 
 
 
-def test_one_batch(plot_count, model, infer_loader, opt, device, file):
+def test_one_batch(plot_count, model, infer_loader, opt, config, device, file):
 
     model.eval()
     gt_emgs_list, recon_emgs_list, gt_keystroke_list = [], [], []
@@ -154,7 +149,7 @@ def test_one_batch(plot_count, model, infer_loader, opt, device, file):
 
 
         # save and plot the emg prediction
-        if plot_count % opt.log_rate == 0:
+        if plot_count % config.train.log_rate == 0:
             save_recon_emg(flattened_recon_emgs, file)
             plot_recon_emg(flattened_gt_emgs, flattened_recon_emgs, flattened_gt_keystroke, file)
 
@@ -181,18 +176,19 @@ def TEST(
     model.load_state_dict(state_dict)
 
     mode = "test"
+    test_set = config.inference.test_set
     with open(to_absolute_path(config.dataset_split), 'r') as f:
         dataset_all_list = json.load(f)
-        dataset_list = dataset_all_list[mode]
+        dataset_list = dataset_all_list[test_set]
     
     all_mse_loss, all_rmse_loss, all_ot_loss = [], [], []
     plot_count = 0
     for file_fullpath in tqdm(dataset_list):
         file = os.path.splitext(file_fullpath)[0]
         infer_dataset = KeyPoseEmgDataset(mode, win_len=opt.win_len_val, overlap_len=0, pose_win_len=opt.pose_win_len, pose_overlap=0, data_root=config.data_root, infer_performance=file)
-        infer_loader = create_dataloader(infer_dataset, opt, "KeyPoseEmgDataloader", False, opt.batch_size_val)
+        infer_loader = create_dataloader(infer_dataset, opt, "KeyPoseEmgDataloader", False, config.train.batch_size_val)
        
-        mse_loss, ot_loss = test_one_batch(plot_count, model, infer_loader, opt,  device, file)
+        mse_loss, ot_loss = test_one_batch(plot_count, model, infer_loader, opt, config, device, file)
         plot_count += 1
         logging.info(f"{file} -- mse_loss: {mse_loss:.4f}, rmse_loss: {np.sqrt(mse_loss):.4f}, ot_loss: {ot_loss:.4f}")
 

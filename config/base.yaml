@@ -3,10 +3,23 @@ defaults:
   - experiment: pianokpm_multimodal
 
 data_root: ./dataset
-dataset_split: ./dataloader/dataset_split/split_partial_dataset.json
+dataset_split: ./dataset/dataset_architectural.json
 
 checkpoint_path: ./saved_model
 checkpoint_name: architectural_eval_model.pth
+
+train:
+  epoch: 200
+  batch_size: 64
+  batch_size_val: 64
+  lr: 0.0001
+  step_size: 20
+  gamma: 0.5
+  log_rate: 1
+
+inference:
+  test_set: test
+
 
 seed: 42
 

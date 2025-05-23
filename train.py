@@ -38,11 +38,6 @@ def get_configurations():
     opt.use_pose = True
     opt.use_key = True
 
-    opt.mode = "train"
-    opt.epoch = 200
-    opt.batch_size = 64
-    opt.batch_size_val = 64
-    opt.log_rate = 300
     opt.win_len = 1024
     opt.win_len_val = 1024
     opt.pose_win_len = 60
@@ -80,10 +75,10 @@ def plot_recon_emg(emg_data, pred_data, epoch, opt, mode):
 
         plt.tight_layout()
         if mode == "train":
-            save_dir = os.path.join('train_plot', 'E%04d' % (epoch))
+            save_dir = os.path.join('train_plots', 'E%04d' % (epoch))
             os.makedirs(save_dir, exist_ok=True)
         else:
-            save_dir = os.path.join('eval_plot', 'E%04d' % (epoch))
+            save_dir = os.path.join('eval_plots', 'E%04d' % (epoch))
             os.makedirs(save_dir, exist_ok=True)
         plt.savefig(os.path.join(save_dir, f"Epoch_{epoch}-Sample_{batch_idx}.png"))
         plt.close(fig)
@@ -98,7 +93,7 @@ def make_lightning_module(config: DictConfig):
 
 
 
-def run_one_batch(mode,data, model, vae, loss_fn, device, opt, i, epoch):
+def run_one_batch(mode,data, model, vae, loss_fn, device, opt, config, i, epoch):
     data['keystroke'], data['emg'] = data['keystroke'].to(device), data['emg'].to(device)
     data['pose_t'], data['pose_r'] = data['pose_t'].to(device), data['pose_r'].to(device)
     gt_keystroke, gt_emg, gt_pose_t, gt_pose_r = data['keystroke'], data['emg'], data['pose_t'], data['pose_r']
@@ -135,21 +130,21 @@ def run_one_batch(mode,data, model, vae, loss_fn, device, opt, i, epoch):
     total_loss, loss_dict = loss_fn(gt_emg, recon_emgs)
 
 
-    if i % opt.log_rate == 0 and epoch % 20 ==0:
+    if i % config.train.log_rate == 0 and epoch % 20 ==0:
         plot_recon_emg(gt_emg, recon_emgs,  epoch, opt, mode)
         
     return total_loss, loss_dict['mse']
 
 
 
-def train_and_val(model, train_loader, val_loader, optimizer, loss_fn, scheduler, opt, epoch, device):
+def train_and_val(model, train_loader, val_loader, optimizer, loss_fn, scheduler, opt, config, epoch, device):
 
     model.train()
     total_loss,total_recon_loss = 0,0
-    for i, data in enumerate(tqdm(train_loader, desc=f"Epoch {epoch}/{opt.epoch}", unit="batch")):
+    for i, data in enumerate(tqdm(train_loader, desc=f"Epoch {epoch}/{config.train.epoch}", unit="batch")):
 
         optimizer.zero_grad()
-        loss, recon_loss = run_one_batch('train',data, model, None, loss_fn, device, opt, i, epoch)
+        loss, recon_loss = run_one_batch('train',data, model, None, loss_fn, device, opt, config, i, epoch)
         
         total_loss += loss.item()
         total_recon_loss += recon_loss.item()
@@ -168,7 +163,7 @@ def train_and_val(model, train_loader, val_loader, optimizer, loss_fn, scheduler
     total_val_loss, total_val_recon_loss = 0,0
     with torch.no_grad():
         for i, data in enumerate(tqdm(val_loader, desc="Validating", unit="batch")):
-            loss, recon_loss = run_one_batch('val',data, model, None, loss_fn, device, opt, i, epoch)
+            loss, recon_loss = run_one_batch('val',data, model, None, loss_fn, device, opt, config, i, epoch)
             
             total_val_loss += loss.item()
             total_val_recon_loss += recon_loss.item()
@@ -187,19 +182,19 @@ def TRAIN(
     opt, device = get_configurations()
 
     model = make_lightning_module(config).to('cuda')
-    optimizer = torch.optim.AdamW(model.parameters(), lr=0.0001)
-    scheduler = StepLR(optimizer, step_size=20, gamma=0.5) # after each batch before eval
+    optimizer = torch.optim.AdamW(model.parameters(), lr=config.train.lr)
+    scheduler = StepLR(optimizer, step_size=config.train.step_size, gamma=config.train.gamma) # after each batch before eval
 
     train_dataset = KeyPoseEmgDataset(mode="train", win_len=opt.win_len, overlap_len=opt.overlap, pose_win_len=opt.pose_win_len, pose_overlap=opt.pose_overlap, data_root=config.data_root, dataset_split=config.dataset_split)
     val_dataset = KeyPoseEmgDataset(mode="val", win_len=opt.win_len_val, overlap_len=0, pose_win_len=opt.pose_win_len, pose_overlap=0, data_root=config.data_root, dataset_split=config.dataset_split)
-    train_loader = create_dataloader(train_dataset, opt, "KeyPoseEmgDataloader", True, opt.batch_size)
-    val_loader = create_dataloader(val_dataset, opt, "KeyPoseEmgDataloader", True, opt.batch_size_val)
+    train_loader = create_dataloader(train_dataset, opt, "KeyPoseEmgDataloader", True, config.train.batch_size)
+    val_loader = create_dataloader(val_dataset, opt, "KeyPoseEmgDataloader", True, config.train.batch_size_val)
 
     best_val_loss = float('inf')
-    for epoch in range(1, opt.epoch+1):
-        train_loss, val_loss = train_and_val(model, train_loader, val_loader, optimizer, loss_fn, scheduler, opt, epoch, device)
-        print(f"Epoch {epoch}/{opt.epoch}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
-        logging.info(f"Epoch {epoch}/{opt.epoch}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+    for epoch in range(1, config.train.epoch+1):
+        train_loss, val_loss = train_and_val(model, train_loader, val_loader, optimizer, loss_fn, scheduler, opt, config, epoch, device)
+        print(f"Epoch {epoch}/{config.train.epoch}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+        logging.info(f"Epoch {epoch}/{config.train.epoch}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             print(f'Best model saved at epoch {epoch}, with val_loss {best_val_loss}')
