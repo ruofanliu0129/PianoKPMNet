@@ -1,11 +1,12 @@
 # From Pose to Muscle: Multimodal Learning for Piano Hand Muscle Electromyography
 A multimodal dataset, [PianoKPM Dataset](https://drive.google.com/drive/folders/1obGEJMsj-5CXV_0rJWja9Aj7AacTnGzO?usp=sharing), and a hand muscle estimation framework, [PianoKPM Net](https://github.com/Nips25PianoEMGResearcher/PianoKPMNet.git), are introduced to facilitate high-fidelity EMG inference. 
 
+[PianoKPM Dataset](https://drive.google.com/drive/folders/1obGEJMsj-5CXV_0rJWja9Aj7AacTnGzO?usp=sharing):
+<img src="images/PianoKPM_Dataset.png" alt="dataset" style="width:100%;"/>
+[PianoKPM Net](https://github.com/Nips25PianoEMGResearcher/PianoKPMNet.git):
+<img src="images/PianoKPM_Net.png" alt="net" style="width:100%;"/>
+
 Installation setup, dataset downloading, pre-trained models, training, and inference code are provided.
-
-<img src="images/PianoKPM_Net.png" alt="net" style="width:80%;"/>
-
-
 
 ## Installation and Setup
 
