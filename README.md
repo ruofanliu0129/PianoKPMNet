@@ -1,7 +1,7 @@
 # From Pose to Muscle: Multimodal Learning for Piano Hand Muscle Electromyography
-A multimodal dataset, [PianoKPM Dataset](https://drive.google.com/drive/folders/1obGEJMsj-5CXV_0rJWja9Aj7AacTnGzO?usp=sharing), and a hand muscle estimation framework, [PianoKPM Net](https://github.com/ruofanliu0129/PianoKPMNet.git), are introduced to facilitate high-fidelity EMG inference. 
+A multimodal dataset, [PianoKPM Dataset](https://drive.google.com/drive/folders/142jhYuR6wSfrPjj5P0GRS-1Tay8zJWCx?usp=sharing), and a hand muscle estimation framework, [PianoKPM Net](https://github.com/ruofanliu0129/PianoKPMNet.git), are introduced to facilitate high-fidelity EMG inference. 
 
-[PianoKPM Dataset](https://drive.google.com/drive/folders/1obGEJMsj-5CXV_0rJWja9Aj7AacTnGzO?usp=sharing):
+[PianoKPM Dataset](https://drive.google.com/drive/folders/142jhYuR6wSfrPjj5P0GRS-1Tay8zJWCx?usp=sharing):
 <img src="images/PianoKPM_Dataset.png" alt="dataset" style="width:100%;"/>
 [PianoKPM Net](https://github.com/ruofanliu0129/PianoKPMNet.git):
 <img src="images/PianoKPM_Net.png" alt="net" style="width:100%;"/>
@@ -26,7 +26,7 @@ conda activate PianoKPM
 
 ## PianoKPM Dataset
 
-Download PianoKPM V1.0 full dataset [HERE](https://drive.google.com/drive/folders/1obGEJMsj-5CXV_0rJWja9Aj7AacTnGzO?usp=sharing).
+Download PianoKPM V1.0 full dataset [HERE](https://drive.google.com/drive/folders/142jhYuR6wSfrPjj5P0GRS-1Tay8zJWCx?usp=sharing).
 ```dataset
 cd /path/to/dataset
 unzip hand_data.zip
@@ -65,7 +65,7 @@ Folder structure:
 
 ## Pre-trained Models
 
-Download pretrained models [HERE](https://drive.google.com/file/d/1mV4nQH2cdAY1XD4kpCs2wllLMz9xidgZ/view?usp=sharing).
+Download pretrained models [HERE](https://drive.google.com/file/d/1Pk2XhcR7j-L9ozin2YiN5SPJrmkpOyOd/view?usp=sharing).
 ```pretrained
 /path/to/saved_model
 ├── architectural_eval_model.pth
