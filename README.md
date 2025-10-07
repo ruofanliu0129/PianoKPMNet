@@ -12,7 +12,7 @@ Installation setup, dataset downloading, pre-trained models, training, and infer
 
 Clone the PianoKPMNet:
 ```setup
-git clone https://github.com/Nips25PianoEMGResearcher/PianoKPMNet.git
+git clone https://github.com/ruofanliu0129/PianoKPMNet.git
 cd PianoKPMNet/
 ```
 Create and activate the environment:
