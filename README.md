@@ -149,10 +149,4 @@ Our model achieves the following performance on PianoKPM Dataset:
 ## 📖 BibTeX
 
 ```bibtex
-@inproceedings{anonymous2025from,
-title={From Pose to Muscle: Multimodal Learning for Piano Hand Muscle Electromyography},
-author={Anonymous},
-booktitle={The Thirty-ninth Annual Conference on Neural Information Processing Systems},
-year={2025},
-url={https://openreview.net/forum?id=ftZEltGArK}
-}
+TBD
