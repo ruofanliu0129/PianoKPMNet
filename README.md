@@ -1,6 +1,6 @@
-<p align="center">
-  <strong><font size="115">From Pose to Muscle: Multimodal Learning for Piano Hand Muscle Electromyography</font></strong>
-</p>
+<h1 align="center">
+  <strong>From Pose to Muscle: Multimodal Learning for Piano Hand Muscle Electromyography</strong>
+</h1>
 <a href="https://openreview.net/pdf/26eb537804fde5b11e5fcc37068d9f9fb6ad6fad.pdf"><img src="https://img.shields.io/badge/Paper-arXiv-red"></a>
 <a href="https://drive.google.com/drive/folders/142jhYuR6wSfrPjj5P0GRS-1Tay8zJWCx?usp=sharing"><img src="https://img.shields.io/badge/Dataset-Google%20Drive-blue?logo=googledrive"></a>
 <a href="#-bibtex"><img src="https://img.shields.io/badge/BibTeX-Citation-green"></a>
